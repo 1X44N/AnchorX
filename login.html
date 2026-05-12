@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AnchorX Humanizer — Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #0a0e17;
+      --card:    #131a2b;
+      --input:   #0d1321;
+      --border:  #1e2a3a;
+      --green:   #00ff9d;
+      --green2:  #00b894;
+      --cyan:    #00d2ff;
+      --red:     #ff4757;
+      --text:    #c8d6e5;
+      --dim:     #5a6a7a;
+      --med:     #8899aa;
+      --mono:    'JetBrains Mono', monospace;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      font-family: var(--mono);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* animated grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    /* glowing orb */
+    body::after {
+      content: '';
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,255,157,0.08) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      animation: pulse 4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+      50%       { opacity: 1;   transform: translate(-50%, -50%) scale(1.1); }
+    }
+
+    .card {
+      position: relative;
+      width: 420px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 48px 40px;
+      box-shadow: 0 0 60px rgba(0,255,157,0.07), 0 24px 64px rgba(0,0,0,0.5);
+      animation: slideUp 0.5s cubic-bezier(.22,1,.36,1) both;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .logo-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--green);
+      letter-spacing: 4px;
+      text-shadow: 0 0 20px rgba(0,255,157,0.5);
+    }
+
+    .logo-sub {
+      font-size: 11px;
+      color: var(--dim);
+      letter-spacing: 2px;
+      margin-top: 6px;
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--green), transparent);
+      margin: 24px 0;
+      opacity: 0.3;
+    }
+
+    label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      color: var(--med);
+      margin-bottom: 10px;
+    }
+
+    input[type="password"] {
+      width: 100%;
+      background: var(--input);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 18px;
+      font-family: var(--mono);
+      font-size: 15px;
+      color: var(--text);
+      outline: none;
+      letter-spacing: 4px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input[type="password"]:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(0,255,157,0.1);
+    }
+
+    input[type="password"]::placeholder {
+      letter-spacing: 2px;
+      color: var(--dim);
+    }
+
+    .error {
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: rgba(255,71,87,0.1);
+      border: 1px solid rgba(255,71,87,0.3);
+      border-radius: 6px;
+      font-size: 12px;
+      color: var(--red);
+      letter-spacing: 1px;
+    }
+
+    button {
+      margin-top: 24px;
+      width: 100%;
+      padding: 15px;
+      background: var(--green);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      cursor: pointer;
+      transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+    }
+
+    button:hover {
+      background: #00ffb3;
+      box-shadow: 0 0 24px rgba(0,255,157,0.4);
+    }
+
+    button:active { transform: scale(0.98); }
+
+    .footer-note {
+      margin-top: 28px;
+      text-align: center;
+      font-size: 10px;
+      color: var(--dim);
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">
+      <div class="logo-title">ANCHORX HUMANIZER</div>
+      <div class="logo-sub">AI HUMANIZER  ·  PRIVATE ACCESS</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <form method="POST" action="/login">
+      <label for="pwd">ACCESS PASSWORD</label>
+      <input
+        type="password"
+        id="pwd"
+        name="password"
+        placeholder="••••••••••"
+        autocomplete="current-password"
+        autofocus
+      />
+
+      {% if error %}
+        <div class="error">⚠ {{ error }}</div>
+      {% endif %}
+
+      <button type="submit">ENTER →</button>
+    </form>
+
+    <p class="footer-note">Authorised users only</p>
+  </div>
+</body>
+</html>
