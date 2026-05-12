@@ -4,434 +4,271 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AnchorX Humanizer</title>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg:      #0a0e17;
-      --card:    #131a2b;
-      --input:   #0d1321;
-      --border:  #1e2a3a;
-      --green:   #00ff9d;
-      --green2:  #00b894;
-      --cyan:    #00d2ff;
-      --red:     #ff4757;
-      --yellow:  #ffa502;
-      --text:    #c8d6e5;
-      --dim:     #5a6a7a;
-      --med:     #8899aa;
-      --mono:    'JetBrains Mono', monospace;
-      --sans:    'Inter', sans-serif;
+      --aqua:       #00b4d8;
+      --aqua-dark:  #0096c7;
+      --aqua-deep:  #0077b6;
+      --aqua-light: #90e0ef;
+      --aqua-pale:  #caf0f8;
+      --aqua-bg:    #eaf7fb;
+      --aqua-bg2:   #f4fbfd;
+      --white:      #ffffff;
+      --text:       #1a2b3c;
+      --text-med:   #4a6070;
+      --text-dim:   #8aa0b0;
+      --border:     #c0e8f5;
+      --border-med: #9dd8ed;
+      --red:        #e05252;
+      --red-bg:     #fff0f0;
+      --red-border: #fccaca;
+      --green:      #22c55e;
+      --yellow:     #f59e0b;
+      --font:       'Inter', sans-serif;
     }
-
     html, body {
       height: 100%;
-      background: var(--bg);
-      font-family: var(--mono);
+      background: var(--aqua-bg);
+      font-family: var(--font);
       color: var(--text);
       overflow: hidden;
     }
-
-    /* subtle grid */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image:
-        linear-gradient(var(--border) 1px, transparent 1px),
-        linear-gradient(90deg, var(--border) 1px, transparent 1px);
-      background-size: 40px 40px;
-      opacity: 0.25;
-      pointer-events: none;
-    }
-
-    /* ── LAYOUT ─────────────────────────────────────────────── */
     #app {
-      position: relative;
       display: flex;
       flex-direction: column;
       height: 100vh;
-      padding: 0;
       overflow: hidden;
     }
 
-    /* ── HEADER ─────────────────────────────────────────────── */
+    /* ── HEADER ── */
     header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 10px 20px;
+      background: white;
       border-bottom: 1px solid var(--border);
-      background: rgba(10,14,23,0.9);
-      backdrop-filter: blur(8px);
       flex-shrink: 0;
-      z-index: 10;
+      box-shadow: 0 2px 8px rgba(0,120,180,0.06);
     }
-
-    .logo-title {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--green);
-      letter-spacing: 3px;
-      text-shadow: 0 0 16px rgba(0,255,157,0.4);
+    .logo { display:flex; align-items:center; gap:10px; }
+    .logo-icon-sm {
+      width:36px; height:36px;
+      background:linear-gradient(135deg, var(--aqua-deep), var(--aqua));
+      border-radius:10px;
+      display:flex; align-items:center; justify-content:center;
     }
-
-    .logo-sub {
-      font-size: 10px;
-      color: var(--dim);
-      letter-spacing: 2px;
-      margin-top: 2px;
+    .logo-icon-sm svg { width:18px; height:18px; fill:none; stroke:white; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+    .logo-text { font-size:16px; font-weight:700; color:var(--aqua-deep); letter-spacing:-0.3px; }
+    .logo-badge {
+      font-size:11px;
+      background:var(--aqua-pale);
+      color:var(--aqua-dark);
+      padding:2px 8px;
+      border-radius:99px;
+      font-weight:500;
     }
-
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .toggle-group {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 11px;
-      color: var(--med);
-      letter-spacing: 1px;
-    }
-
-    .toggle-label {
-      font-weight: 600;
-      color: var(--dim);
-    }
-
-    /* custom toggle switch */
-    .switch {
-      position: relative;
-      width: 44px;
-      height: 24px;
-      flex-shrink: 0;
-    }
-    .switch input { opacity: 0; width: 0; height: 0; }
+    .header-right { display:flex; align-items:center; gap:16px; }
+    .toggle-row { display:flex; align-items:center; gap:8px; font-size:12px; font-weight:500; color:var(--text-med); }
+    .switch { position:relative; width:40px; height:22px; flex-shrink:0; }
+    .switch input { opacity:0; width:0; height:0; }
     .slider {
-      position: absolute;
-      inset: 0;
-      background: var(--border);
-      border-radius: 24px;
-      cursor: pointer;
-      transition: background 0.2s;
+      position:absolute; inset:0;
+      background:var(--border);
+      border-radius:22px;
+      cursor:pointer;
+      transition:background 0.2s;
+      border:1.5px solid var(--border-med);
     }
     .slider::before {
-      content: '';
-      position: absolute;
-      height: 16px;
-      width: 16px;
-      left: 4px;
-      top: 4px;
-      background: var(--dim);
-      border-radius: 50%;
-      transition: transform 0.2s, background 0.2s;
+      content:'';
+      position:absolute;
+      height:14px; width:14px;
+      left:3px; top:2px;
+      background:var(--text-dim);
+      border-radius:50%;
+      transition:transform 0.2s, background 0.2s;
     }
-    input:checked + .slider { background: rgba(0,255,157,0.2); border: 1px solid var(--green); }
-    input:checked + .slider::before { transform: translateX(20px); background: var(--green); }
-
-    .logout-btn {
-      font-family: var(--mono);
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 2px;
-      color: var(--dim);
-      background: none;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 6px 12px;
-      cursor: pointer;
-      text-decoration: none;
-      transition: color 0.2s, border-color 0.2s;
+    input:checked + .slider { background:var(--aqua-pale); border-color:var(--aqua); }
+    input:checked + .slider::before { transform:translateX(17px); background:var(--aqua-dark); }
+    .logout-link {
+      font-size:12px;
+      font-weight:500;
+      color:var(--text-dim);
+      text-decoration:none;
+      padding:6px 12px;
+      border:1px solid var(--border);
+      border-radius:8px;
+      transition:color 0.2s, border-color 0.2s;
     }
-    .logout-btn:hover { color: var(--red); border-color: var(--red); }
+    .logout-link:hover { color:var(--red); border-color:var(--red-border); }
 
-    /* ── SCORE CARDS ────────────────────────────────────────── */
+    /* ── SCORE STRIP ── */
     .scores {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 16px;
-      flex-shrink: 0;
+      display:flex; align-items:center; gap:8px;
+      padding:10px 16px;
+      flex-shrink:0;
     }
-
     .score-card {
-      flex: 1;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
+      flex:1;
+      background:white;
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:12px 16px;
+      display:flex; align-items:center; gap:14px;
+      box-shadow:0 2px 8px rgba(0,120,180,0.05);
     }
+    .sc-label { font-size:11px; font-weight:600; color:var(--text-dim); letter-spacing:0.5px; white-space:nowrap; }
+    .sc-bar-wrap { flex:1; height:6px; background:var(--aqua-bg); border-radius:99px; overflow:hidden; border:1px solid var(--border); }
+    .sc-bar-fill { height:100%; border-radius:99px; width:0%; transition:width 0.7s cubic-bezier(.4,0,.2,1), background 0.3s; }
+    .sc-value { font-size:22px; font-weight:700; color:var(--text-dim); min-width:48px; text-align:right; transition:color 0.3s; }
+    .arrow { font-size:18px; color:var(--aqua); flex-shrink:0; font-weight:700; }
 
-    .score-label {
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 2px;
-      color: var(--dim);
-      white-space: nowrap;
-    }
-
-    .score-bar-wrap {
-      flex: 1;
-      height: 5px;
-      background: var(--border);
-      border-radius: 99px;
-      overflow: hidden;
-    }
-    .score-bar-fill {
-      height: 100%;
-      border-radius: 99px;
-      width: 0%;
-      transition: width 0.6s cubic-bezier(.4,0,.2,1), background 0.3s;
-    }
-
-    .score-value {
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--dim);
-      min-width: 52px;
-      text-align: right;
-      transition: color 0.3s;
-    }
-
-    .arrow {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--green);
-      flex-shrink: 0;
-    }
-
-    /* ── MAIN PANELS ────────────────────────────────────────── */
-    .panels {
-      display: flex;
-      gap: 8px;
-      flex: 1;
-      padding: 0 16px 8px;
-      min-height: 0;
-    }
-
+    /* ── PANELS ── */
+    .panels { display:flex; gap:8px; flex:1; padding:0 16px 8px; min-height:0; }
     .panel {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      overflow: hidden;
+      flex:1;
+      display:flex; flex-direction:column;
+      background:white;
+      border:1px solid var(--border);
+      border-radius:14px;
+      overflow:hidden;
+      box-shadow:0 2px 8px rgba(0,120,180,0.05);
     }
-
-    .panel-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 14px;
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
+    .panel-head {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:10px 14px;
+      border-bottom:1px solid var(--border);
+      background:var(--aqua-bg2);
+      flex-shrink:0;
     }
-
-    .panel-title {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      color: var(--med);
-    }
-
-    .panel-actions { display: flex; gap: 6px; }
-
+    .panel-title { font-size:11px; font-weight:600; color:var(--text-med); letter-spacing:0.5px; }
+    .panel-actions { display:flex; gap:6px; }
     .btn-sm {
-      font-family: var(--mono);
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 1px;
-      padding: 5px 10px;
-      border-radius: 4px;
-      cursor: pointer;
-      border: 1px solid transparent;
-      transition: all 0.15s;
+      font-family:var(--font);
+      font-size:11px; font-weight:600;
+      padding:5px 10px;
+      border-radius:7px;
+      cursor:pointer;
+      border:1px solid transparent;
+      transition:all 0.15s;
     }
-
-    .btn-clear  { background: rgba(255,71,87,0.12);  color: var(--red);    border-color: rgba(255,71,87,0.25); }
-    .btn-clear:hover  { background: rgba(255,71,87,0.22); }
-    .btn-copy   { background: rgba(0,210,255,0.1);   color: var(--cyan);   border-color: rgba(0,210,255,0.25); }
-    .btn-copy:hover   { background: rgba(0,210,255,0.2); }
-
+    .btn-clear { background:var(--red-bg); color:var(--red); border-color:var(--red-border); }
+    .btn-clear:hover { background:#ffe0e0; }
+    .btn-copy  { background:var(--aqua-pale); color:var(--aqua-deep); border-color:var(--aqua-light); }
+    .btn-copy:hover  { background:#b5ecf8; }
     textarea, .output-area {
-      flex: 1;
-      width: 100%;
-      min-height: 0;
-      background: var(--input);
-      border: none;
-      padding: 14px;
-      font-family: var(--sans);
-      font-size: 13.5px;
-      line-height: 1.7;
-      color: var(--text);
-      resize: none;
-      outline: none;
+      flex:1;
+      width:100%;
+      min-height:0;
+      background:white;
+      border:none;
+      padding:14px 16px;
+      font-family:var(--font);
+      font-size:13.5px;
+      line-height:1.75;
+      color:var(--text);
+      resize:none;
+      outline:none;
     }
-
-    .output-area {
-      overflow-y: auto;
-      white-space: pre-wrap;
-      word-break: break-word;
+    .output-area { overflow-y:auto; white-space:pre-wrap; word-break:break-word; }
+    .output-area:empty::before { content:'Humanized text will appear here...'; color:var(--text-dim); font-style:italic; }
+    .panel-foot {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:6px 14px;
+      border-top:1px solid var(--border);
+      background:var(--aqua-bg2);
+      flex-shrink:0;
     }
+    .word-count { font-size:11px; color:var(--text-dim); }
 
-    .output-area:empty::before {
-      content: 'Humanized text will appear here...';
-      color: var(--dim);
-      font-style: italic;
-    }
-
-    .panel-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 6px 14px;
-      border-top: 1px solid var(--border);
-      flex-shrink: 0;
-    }
-
-    .word-count {
-      font-size: 10px;
-      color: var(--dim);
-      letter-spacing: 1px;
-    }
-
-    /* ── HUMANIZE BUTTON ────────────────────────────────────── */
-    .action-row {
-      padding: 0 16px 10px;
-      flex-shrink: 0;
-    }
-
+    /* ── HUMANIZE BUTTON ── */
+    .action-row { padding:0 16px 8px; flex-shrink:0; }
     #humanize-btn {
-      width: 100%;
-      padding: 14px;
-      background: var(--green);
-      color: #000;
-      border: none;
-      border-radius: 8px;
-      font-family: var(--mono);
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 3px;
-      cursor: pointer;
-      transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+      width:100%;
+      padding:14px;
+      background:linear-gradient(135deg, var(--aqua-deep), var(--aqua));
+      color:white;
+      border:none;
+      border-radius:12px;
+      font-family:var(--font);
+      font-size:14px;
+      font-weight:600;
+      cursor:pointer;
+      letter-spacing:0.3px;
+      box-shadow:0 4px 16px rgba(0,150,199,0.28);
+      transition:opacity 0.2s, transform 0.1s, box-shadow 0.2s;
+      display:flex; align-items:center; justify-content:center; gap:8px;
     }
+    #humanize-btn:hover:not(:disabled) { opacity:0.9; transform:translateY(-1px); box-shadow:0 6px 22px rgba(0,150,199,0.38); }
+    #humanize-btn:active:not(:disabled) { transform:scale(0.99); }
+    #humanize-btn:disabled { background:var(--border); color:var(--text-dim); cursor:not-allowed; box-shadow:none; transform:none; }
+    #humanize-btn svg { width:17px; height:17px; fill:none; stroke:white; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
 
-    #humanize-btn:hover:not(:disabled) {
-      background: #00ffb3;
-      box-shadow: 0 0 24px rgba(0,255,157,0.35);
-    }
-
-    #humanize-btn:active:not(:disabled) { transform: scale(0.99); }
-    #humanize-btn:disabled { background: var(--dim); color: var(--border); cursor: not-allowed; }
-
-    /* ── STATUS BAR ─────────────────────────────────────────── */
+    /* ── STATUS ── */
     .status-bar {
-      padding: 5px 16px 8px;
-      font-size: 10px;
-      letter-spacing: 1.5px;
-      color: var(--dim);
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      padding:4px 16px 8px;
+      font-size:11px;
+      color:var(--text-dim);
+      flex-shrink:0;
+      display:flex; align-items:center; gap:7px;
     }
+    .status-dot { width:6px; height:6px; border-radius:50%; background:var(--text-dim); flex-shrink:0; transition:background 0.3s; }
 
-    .status-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--dim);
-      flex-shrink: 0;
-      transition: background 0.3s;
-    }
-
-    /* ── INDICATORS ─────────────────────────────────────────── */
+    /* ── INDICATORS ── */
     .indicators {
-      display: none;
-      margin: 0 16px 8px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 12px 16px;
-      gap: 16px;
-      flex-shrink: 0;
+      display:none;
+      margin:0 16px 8px;
+      background:white;
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:12px 16px;
+      gap:16px;
+      flex-shrink:0;
     }
+    .indicators.visible { display:flex; }
+    .ind-col { flex:1; }
+    .ind-title { font-size:11px; font-weight:600; margin-bottom:6px; letter-spacing:0.3px; }
+    .ind-item { font-size:11px; color:var(--text-med); padding:2px 0; }
+    .ind-item::before { content:'· '; color:var(--aqua); font-weight:700; }
 
-    .indicators.visible {
-      display: flex;
-    }
-
-    .ind-col { flex: 1; }
-
-    .ind-title {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      margin-bottom: 6px;
-    }
-
-    .ind-item {
-      font-size: 10px;
-      color: var(--dim);
-      padding: 2px 0;
-      letter-spacing: 0.5px;
-    }
-
-    .ind-item::before { content: '› '; color: var(--med); }
-
-    /* ── SPINNER ─────────────────────────────────────────────── */
+    /* ── SPINNER ── */
     .spinner {
-      display: inline-block;
-      width: 14px;
-      height: 14px;
-      border: 2px solid rgba(0,0,0,0.2);
-      border-top-color: #000;
-      border-radius: 50%;
-      animation: spin 0.6s linear infinite;
-      vertical-align: middle;
-      margin-right: 8px;
+      display:inline-block;
+      width:15px; height:15px;
+      border:2px solid rgba(255,255,255,0.3);
+      border-top-color:white;
+      border-radius:50%;
+      animation:spin 0.6s linear infinite;
+      vertical-align:middle;
     }
+    @keyframes spin { to { transform:rotate(360deg); } }
 
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* ── SCROLLBAR ───────────────────────────────────────────── */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--dim); }
-
-    /* ── COPY TOAST ──────────────────────────────────────────── */
+    /* ── TOAST ── */
     .toast {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: var(--green);
-      color: #000;
-      font-family: var(--mono);
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      padding: 10px 18px;
-      border-radius: 6px;
-      box-shadow: 0 4px 16px rgba(0,255,157,0.3);
-      opacity: 0;
-      transform: translateY(8px);
-      transition: opacity 0.2s, transform 0.2s;
-      pointer-events: none;
-      z-index: 999;
+      position:fixed;
+      bottom:20px; right:20px;
+      background:var(--aqua-deep);
+      color:white;
+      font-family:var(--font);
+      font-size:13px;
+      font-weight:600;
+      padding:10px 18px;
+      border-radius:10px;
+      box-shadow:0 4px 16px rgba(0,100,160,0.25);
+      opacity:0; transform:translateY(8px);
+      transition:opacity 0.2s, transform 0.2s;
+      pointer-events:none;
+      z-index:999;
     }
+    .toast.show { opacity:1; transform:translateY(0); }
 
-    .toast.show { opacity: 1; transform: translateY(0); }
+    ::-webkit-scrollbar { width:5px; }
+    ::-webkit-scrollbar-track { background:transparent; }
+    ::-webkit-scrollbar-thumb { background:var(--border); border-radius:99px; }
+    ::-webkit-scrollbar-thumb:hover { background:var(--aqua-light); }
   </style>
 </head>
 <body>
@@ -439,75 +276,64 @@
 
   <!-- HEADER -->
   <header>
-    <div>
-      <div class="logo-title">ANCHORX HUMANIZER</div>
-      <div class="logo-sub">AI HUMANIZER  ·  0% AI DETECTION  ·  AUTO-FIX MODE</div>
+    <div class="logo">
+      <div class="logo-icon-sm">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      </div>
+      <span class="logo-text">AnchorX Humanizer</span>
+      <span class="logo-badge">AI Humanizer</span>
     </div>
-
     <div class="header-right">
-      <div class="toggle-group">
-        <span class="toggle-label">AUTO-FIX</span>
+      <div class="toggle-row">
+        Auto-Fix
         <label class="switch">
           <input type="checkbox" id="auto-fix" checked />
           <span class="slider"></span>
         </label>
       </div>
-      <a href="/logout" class="logout-btn">LOGOUT</a>
+      <a href="/logout" class="logout-link">Logout</a>
     </div>
   </header>
 
-  <!-- SCORE CARDS -->
+  <!-- SCORES -->
   <div class="scores">
     <div class="score-card">
-      <span class="score-label">ORIGINAL AI SCORE</span>
-      <div class="score-bar-wrap">
-        <div class="score-bar-fill" id="before-bar" style="background:var(--red)"></div>
-      </div>
-      <span class="score-value" id="before-score">--</span>
+      <span class="sc-label">Original AI Score</span>
+      <div class="sc-bar-wrap"><div class="sc-bar-fill" id="before-bar"></div></div>
+      <span class="sc-value" id="before-score">--</span>
     </div>
-
-    <span class="arrow">&gt;&gt;&gt;</span>
-
+    <span class="arrow">›</span>
     <div class="score-card">
-      <span class="score-label">HUMANIZED AI SCORE</span>
-      <div class="score-bar-wrap">
-        <div class="score-bar-fill" id="after-bar" style="background:var(--green)"></div>
-      </div>
-      <span class="score-value" id="after-score" style="color:var(--green)">--</span>
+      <span class="sc-label">Humanized AI Score</span>
+      <div class="sc-bar-wrap"><div class="sc-bar-fill" id="after-bar"></div></div>
+      <span class="sc-value" id="after-score">--</span>
     </div>
   </div>
 
-  <!-- TEXT PANELS -->
+  <!-- PANELS -->
   <div class="panels">
-    <!-- INPUT -->
     <div class="panel">
-      <div class="panel-header">
-        <span class="panel-title">PASTE AI TEXT</span>
+      <div class="panel-head">
+        <span class="panel-title">Paste AI text here</span>
         <div class="panel-actions">
-          <button class="btn-sm btn-clear" onclick="clearInput()">CLEAR</button>
+          <button class="btn-sm btn-clear" onclick="clearInput()">Clear</button>
         </div>
       </div>
-      <textarea
-        id="input-text"
-        placeholder="Paste your AI-generated text here..."
-        spellcheck="false"
-        oninput="updateCount()"
-      ></textarea>
-      <div class="panel-footer">
+      <textarea id="input-text" placeholder="Paste your AI-generated text here..." spellcheck="false" oninput="updateCount()"></textarea>
+      <div class="panel-foot">
         <span class="word-count" id="input-count">0 words · 0 chars</span>
       </div>
     </div>
 
-    <!-- OUTPUT -->
     <div class="panel">
-      <div class="panel-header">
-        <span class="panel-title">HUMANIZED OUTPUT</span>
+      <div class="panel-head">
+        <span class="panel-title">Humanized output</span>
         <div class="panel-actions">
-          <button class="btn-sm btn-copy" onclick="copyOutput()">COPY</button>
+          <button class="btn-sm btn-copy" onclick="copyOutput()">Copy</button>
         </div>
       </div>
-      <div class="output-area" id="output-text" contenteditable="false"></div>
-      <div class="panel-footer">
+      <div class="output-area" id="output-text"></div>
+      <div class="panel-foot">
         <span class="word-count" id="output-count">0 words · 0 chars</span>
       </div>
     </div>
@@ -516,61 +342,58 @@
   <!-- HUMANIZE BUTTON -->
   <div class="action-row">
     <button id="humanize-btn" onclick="humanize()">
-      &gt;&gt;&nbsp; HUMANIZE NOW &nbsp;&lt;&lt;
+      <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      Humanize Now
     </button>
   </div>
 
-  <!-- STATUS BAR -->
+  <!-- STATUS -->
   <div class="status-bar">
     <div class="status-dot" id="status-dot"></div>
-    <span id="status-text">READY  ·  Paste text and click HUMANIZE NOW  ·  AUTO-FIX ON</span>
+    <span id="status-text">Ready — Paste text and click Humanize Now · Auto-Fix on</span>
   </div>
 
   <!-- INDICATORS -->
   <div class="indicators" id="indicators">
     <div class="ind-col">
-      <div class="ind-title" style="color:var(--red)">ORIGINAL FLAGS</div>
+      <div class="ind-title" style="color:var(--red)">Original flags</div>
       <div id="before-indicators"></div>
     </div>
     <div class="ind-col">
-      <div class="ind-title" style="color:var(--green)">HUMANIZED FLAGS</div>
+      <div class="ind-title" style="color:var(--aqua-dark)">Humanized flags</div>
       <div id="after-indicators"></div>
     </div>
   </div>
 
 </div>
 
-<!-- COPY TOAST -->
-<div class="toast" id="toast">COPIED!</div>
+<div class="toast" id="toast">Copied!</div>
 
 <script>
-  // ── UTILITIES ───────────────────────────────────────────────
-
-  function setStatus(msg, color = 'var(--dim)') {
+  function setStatus(msg, color) {
     document.getElementById('status-text').textContent = msg;
-    document.getElementById('status-dot').style.background = color;
+    document.getElementById('status-dot').style.background = color || 'var(--text-dim)';
   }
 
-  function scoreColor(score) {
-    if (score >= 70) return 'var(--red)';
-    if (score >= 40) return 'var(--yellow)';
+  function scoreColor(s) {
+    if (s >= 70) return 'var(--red)';
+    if (s >= 40) return 'var(--yellow)';
     return 'var(--green)';
   }
 
   function updateCount() {
-    const text  = document.getElementById('input-text').value.trim();
-    const words = text ? text.split(/\s+/).length : 0;
-    document.getElementById('input-count').textContent =
-      `${words.toLocaleString()} words · ${text.length.toLocaleString()} chars`;
+    const t = document.getElementById('input-text').value.trim();
+    const w = t ? t.split(/\s+/).length : 0;
+    document.getElementById('input-count').textContent = w.toLocaleString() + ' words · ' + t.length.toLocaleString() + ' chars';
   }
 
   function clearInput() {
     document.getElementById('input-text').value = '';
     updateCount();
     document.getElementById('before-score').textContent = '--';
-    document.getElementById('before-score').style.color = 'var(--dim)';
+    document.getElementById('before-score').style.color = 'var(--text-dim)';
     document.getElementById('before-bar').style.width = '0%';
-    setStatus('READY  ·  Paste text and click HUMANIZE NOW');
+    setStatus('Ready — Paste text and click Humanize Now');
   }
 
   function copyOutput() {
@@ -583,110 +406,81 @@
     });
   }
 
-  // ── MAIN HUMANIZE FUNCTION ──────────────────────────────────
-
   async function humanize() {
     const text    = document.getElementById('input-text').value.trim();
     const autoFix = document.getElementById('auto-fix').checked;
-
-    if (!text) {
-      setStatus('⚠ Please paste some text first.', 'var(--red)');
-      return;
-    }
+    if (!text) { setStatus('Please paste some text first.', 'var(--red)'); return; }
 
     const btn = document.getElementById('humanize-btn');
     btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span> PROCESSING...';
+    btn.innerHTML = '<span class="spinner"></span> Processing...';
 
-    // Reset output
     document.getElementById('output-text').textContent = '';
     document.getElementById('output-count').textContent = '0 words · 0 chars';
     document.getElementById('after-score').textContent = '--';
     document.getElementById('after-bar').style.width = '0%';
     document.getElementById('indicators').classList.remove('visible');
-
-    setStatus('Analysing original text...', 'var(--yellow)');
+    setStatus('Analysing text...', 'var(--yellow)');
 
     try {
-      const res = await fetch('/api/humanize', {
+      const res  = await fetch('/api/humanize', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text, auto_fix: autoFix }),
       });
-
       const data = await res.json();
 
       if (!res.ok || data.error) {
-        setStatus('⚠ ERROR: ' + (data.error || 'Something went wrong'), 'var(--red)');
+        setStatus('Error: ' + (data.error || 'Something went wrong'), 'var(--red)');
         btn.disabled = false;
-        btn.innerHTML = '&gt;&gt;&nbsp; HUMANIZE NOW &nbsp;&lt;&lt;';
+        btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> Humanize Now';
         return;
       }
 
-      // ── Update before score ──
       const bScore = data.before.score;
       document.getElementById('before-score').textContent = bScore + '%';
       document.getElementById('before-score').style.color = scoreColor(bScore);
       document.getElementById('before-bar').style.width = bScore + '%';
       document.getElementById('before-bar').style.background = scoreColor(bScore);
 
-      // ── Update output text ──
-      const outputEl = document.getElementById('output-text');
-      outputEl.textContent = data.result;
+      document.getElementById('output-text').textContent = data.result;
       const words = data.result.trim().split(/\s+/).length;
-      document.getElementById('output-count').textContent =
-        `${words.toLocaleString()} words · ${data.result.length.toLocaleString()} chars`;
+      document.getElementById('output-count').textContent = words.toLocaleString() + ' words · ' + data.result.length.toLocaleString() + ' chars';
 
-      // ── Update after score ──
       const aScore = data.after.score;
       document.getElementById('after-score').textContent = aScore + '%';
       document.getElementById('after-score').style.color = scoreColor(aScore);
       document.getElementById('after-bar').style.width = aScore + '%';
       document.getElementById('after-bar').style.background = scoreColor(aScore);
 
-      // ── Show indicators ──
       renderIndicators(data.before.indicators, data.after.indicators);
 
-      // ── Final status ──
-      const improvement = bScore - aScore;
-      const attemptsMsg = data.attempts > 0 ? `  ·  auto-fix ran ${data.attempts}x` : '';
-      setStatus(
-        `DONE!  AI Score: ${bScore}% → ${aScore}%  (−${improvement}%)  ·  Human Ready!${attemptsMsg}`,
-        'var(--green)'
-      );
+      const diff = bScore - aScore;
+      const att  = data.attempts > 0 ? '  ·  Auto-fix ran ' + data.attempts + 'x' : '';
+      setStatus('Done!  ' + bScore + '% → ' + aScore + '%  (−' + diff + '%)  ·  Looks human!' + att, 'var(--aqua-dark)');
 
-    } catch (err) {
-      setStatus('⚠ Network error — is the server running?', 'var(--red)');
+    } catch (e) {
+      setStatus('Network error — is the server running?', 'var(--red)');
     }
 
     btn.disabled = false;
-    btn.innerHTML = '&gt;&gt;&nbsp; HUMANIZE NOW &nbsp;&lt;&lt;';
+    btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> Humanize Now';
   }
 
   function renderIndicators(before, after) {
-    const bEl = document.getElementById('before-indicators');
-    const aEl = document.getElementById('after-indicators');
-    bEl.innerHTML = '';
-    aEl.innerHTML = '';
-
-    before.slice(0, 5).forEach(ind => {
-      const d = document.createElement('div');
-      d.className = 'ind-item';
-      d.textContent = ind;
-      bEl.appendChild(d);
+    ['before','after'].forEach((key, i) => {
+      const el = document.getElementById(key + '-indicators');
+      el.innerHTML = '';
+      (i === 0 ? before : after).slice(0, 5).forEach(ind => {
+        const d = document.createElement('div');
+        d.className = 'ind-item';
+        d.textContent = ind;
+        el.appendChild(d);
+      });
     });
-
-    after.slice(0, 5).forEach(ind => {
-      const d = document.createElement('div');
-      d.className = 'ind-item';
-      d.textContent = ind;
-      aEl.appendChild(d);
-    });
-
     document.getElementById('indicators').classList.add('visible');
   }
 
-  // Allow Ctrl+Enter to trigger humanize
   document.getElementById('input-text').addEventListener('keydown', e => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') humanize();
   });
