@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,36 +7,70 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --aqua:      #00b4d8;
-      --aqua-dark: #0096c7;
-      --aqua-deep: #0077b6;
-      --aqua-light:#90e0ef;
-      --aqua-pale: #caf0f8;
-      --aqua-bg:   #eaf7fb;
-      --white:     #ffffff;
-      --text:      #1a2b3c;
-      --text-med:  #4a6070;
-      --text-dim:  #8aa0b0;
-      --border:    #c0e8f5;
-      --red:       #e05252;
-      --font:      'Inter', sans-serif;
+
+    /* ── LIGHT THEME ── */
+    :root, [data-theme="light"] {
+      --bg:         #eaf7fb;
+      --card-bg:    #ffffff;
+      --card-top1:  #0077b6;
+      --card-top2:  #00b4d8;
+      --input-bg:   #eaf7fb;
+      --border:     #c0e8f5;
+      --text:       #1a2b3c;
+      --text-med:   #4a6070;
+      --text-dim:   #8aa0b0;
+      --aqua:       #00b4d8;
+      --aqua-dark:  #0096c7;
+      --aqua-deep:  #0077b6;
+      --aqua-pale:  #caf0f8;
+      --red:        #e05252;
+      --red-bg:     #fff0f0;
+      --red-border: #fccaca;
+      --blob1:      rgba(0,180,216,0.12);
+      --blob2:      rgba(144,224,239,0.15);
+      --shadow:     0 20px 60px rgba(0,100,160,0.13), 0 4px 16px rgba(0,100,160,0.06);
     }
+
+    /* ── DARK THEME ── */
+    [data-theme="dark"] {
+      --bg:         #0d1117;
+      --card-bg:    #161d2b;
+      --card-top1:  #005a8a;
+      --card-top2:  #007faa;
+      --input-bg:   #0d1117;
+      --border:     #1e3045;
+      --text:       #cde4f0;
+      --text-med:   #7aaabb;
+      --text-dim:   #4a6878;
+      --aqua:       #00b4d8;
+      --aqua-dark:  #0096c7;
+      --aqua-deep:  #48c9e8;
+      --aqua-pale:  #0a2535;
+      --red:        #f47070;
+      --red-bg:     #2a1010;
+      --red-border: #5a2020;
+      --blob1:      rgba(0,180,216,0.06);
+      --blob2:      rgba(0,100,140,0.1);
+      --shadow:     0 20px 60px rgba(0,0,0,0.5), 0 4px 16px rgba(0,0,0,0.3);
+    }
+
     html, body {
       height: 100%;
-      background: var(--aqua-bg);
-      font-family: var(--font);
+      background: var(--bg);
+      font-family: 'Inter', sans-serif;
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
+      transition: background 0.3s;
     }
+
     body::before {
       content: '';
       position: fixed;
       width: 700px; height: 700px;
       border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%;
-      background: rgba(0,180,216,0.12);
+      background: var(--blob1);
       top: -220px; right: -220px;
       animation: morph 9s ease-in-out infinite;
       pointer-events: none;
@@ -46,7 +80,7 @@
       position: fixed;
       width: 500px; height: 500px;
       border-radius: 40% 60% 30% 70% / 60% 40% 60% 40%;
-      background: rgba(144,224,239,0.15);
+      background: var(--blob2);
       bottom: -160px; left: -160px;
       animation: morph 12s ease-in-out infinite reverse;
       pointer-events: none;
@@ -55,41 +89,44 @@
       0%,100% { border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%; }
       50%      { border-radius: 30% 70% 40% 60% / 60% 30% 70% 40%; }
     }
+
+    /* theme toggle */
+    .theme-btn {
+      position: fixed;
+      top: 16px; right: 16px;
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: var(--shadow);
+      transition: background 0.2s, transform 0.2s;
+      z-index: 100;
+    }
+    .theme-btn:hover { transform: scale(1.08); }
+    .theme-btn svg { width: 18px; height: 18px; fill: none; stroke: var(--text-med); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
     .card {
       position: relative;
       width: 420px;
-      background: var(--white);
+      background: var(--card-bg);
       border-radius: 24px;
       overflow: hidden;
-      box-shadow: 0 20px 60px rgba(0,100,160,0.13), 0 4px 16px rgba(0,100,160,0.06);
+      box-shadow: var(--shadow);
       animation: up 0.5s cubic-bezier(.22,1,.36,1) both;
+      transition: background 0.3s, box-shadow 0.3s;
     }
-    @keyframes up {
-      from { opacity:0; transform: translateY(20px); }
-      to   { opacity:1; transform: translateY(0); }
-    }
+    @keyframes up { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
+
     .card-top {
-      background: linear-gradient(135deg, var(--aqua-deep) 0%, var(--aqua-dark) 40%, var(--aqua) 100%);
+      background: linear-gradient(135deg, var(--card-top1) 0%, var(--card-top2) 100%);
       padding: 36px 36px 30px;
-      position: relative;
-      overflow: hidden;
+      position: relative; overflow: hidden;
     }
-    .card-top::before {
-      content:'';
-      position:absolute;
-      width:200px; height:200px;
-      border-radius:50%;
-      background:rgba(255,255,255,0.08);
-      top:-60px; right:-40px;
-    }
-    .card-top::after {
-      content:'';
-      position:absolute;
-      width:120px; height:120px;
-      border-radius:50%;
-      background:rgba(255,255,255,0.05);
-      bottom:-30px; left:20px;
-    }
+    .card-top::before { content:''; position:absolute; width:200px; height:200px; border-radius:50%; background:rgba(255,255,255,0.07); top:-60px; right:-40px; }
+    .card-top::after  { content:''; position:absolute; width:120px; height:120px; border-radius:50%; background:rgba(255,255,255,0.05); bottom:-30px; left:20px; }
+
     .logo-icon {
       width:52px; height:52px;
       background:rgba(255,255,255,0.18);
@@ -99,9 +136,11 @@
       margin-bottom:14px;
     }
     .logo-icon svg { width:26px; height:26px; fill:none; stroke:white; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
-    .logo-title { font-size:22px; font-weight:700; color:white; letter-spacing:-0.3px; }
+    .logo-title { font-size:22px; font-weight:700; color:white; }
     .logo-sub   { font-size:13px; color:rgba(255,255,255,0.72); margin-top:4px; }
-    .card-body  { padding:32px 36px 36px; }
+
+    .card-body { padding:32px 36px 36px; }
+
     label {
       display:block;
       font-size:11px; font-weight:600;
@@ -110,71 +149,70 @@
       text-transform:uppercase;
       margin-bottom:8px;
     }
+
     .input-wrap { position:relative; }
-    .input-wrap .icon {
+    .input-wrap .ico {
       position:absolute; left:13px; top:50%; transform:translateY(-50%);
-      width:17px; height:17px;
-      pointer-events:none;
+      width:17px; height:17px; pointer-events:none;
+    }
+    .input-wrap .ico path, .input-wrap .ico rect {
+      stroke:var(--text-dim); fill:none; stroke-width:2;
+      stroke-linecap:round; stroke-linejoin:round;
       transition:stroke 0.2s;
     }
-    .input-wrap .icon path, .input-wrap .icon rect, .input-wrap .icon line { stroke:var(--text-dim); fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; transition:stroke 0.2s; }
+
     input[type="password"] {
       width:100%;
-      background:var(--aqua-bg);
+      background:var(--input-bg);
       border:1.5px solid var(--border);
       border-radius:12px;
       padding:13px 14px 13px 40px;
-      font-family:var(--font);
+      font-family:'Inter',sans-serif;
       font-size:15px;
       color:var(--text);
       outline:none;
       letter-spacing:3px;
       transition:border-color 0.2s, background 0.2s, box-shadow 0.2s;
     }
-    input[type="password"]:focus { border-color:var(--aqua); background:white; box-shadow:0 0 0 4px rgba(0,180,216,0.1); }
-    input[type="password"]:focus ~ .icon path,
-    input[type="password"]:focus ~ .icon rect { stroke:var(--aqua); }
+    input[type="password"]:focus { border-color:var(--aqua); background:var(--card-bg); box-shadow:0 0 0 4px rgba(0,180,216,0.1); }
     input[type="password"]::placeholder { letter-spacing:1px; color:var(--text-dim); }
+
     .error-box {
-      margin-top:12px;
-      padding:10px 14px;
-      background:#fff0f0;
-      border:1px solid #fccaca;
-      border-radius:10px;
-      font-size:13px;
-      color:var(--red);
+      margin-top:12px; padding:10px 14px;
+      background:var(--red-bg); border:1px solid var(--red-border);
+      border-radius:10px; font-size:13px; color:var(--red);
     }
+
     .btn {
-      margin-top:20px;
-      width:100%;
-      padding:14px;
-      background:linear-gradient(135deg, var(--aqua-dark), var(--aqua));
-      color:white;
-      border:none;
-      border-radius:12px;
-      font-family:var(--font);
-      font-size:15px;
-      font-weight:600;
+      margin-top:20px; width:100%; padding:14px;
+      background:linear-gradient(135deg, var(--card-top1), var(--aqua));
+      color:white; border:none; border-radius:12px;
+      font-family:'Inter',sans-serif; font-size:15px; font-weight:600;
       cursor:pointer;
       display:flex; align-items:center; justify-content:center; gap:8px;
       box-shadow:0 4px 16px rgba(0,150,199,0.28);
       transition:opacity 0.2s, transform 0.1s, box-shadow 0.2s;
-      letter-spacing:0.2px;
     }
     .btn:hover { opacity:0.9; transform:translateY(-1px); box-shadow:0 6px 22px rgba(0,150,199,0.38); }
     .btn:active { transform:scale(0.99); }
     .btn svg { width:16px; height:16px; fill:none; stroke:white; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; }
+
     .divider {
-      margin:22px 0 0;
-      text-align:center;
-      font-size:12px;
-      color:var(--text-dim);
+      margin:22px 0 0; text-align:center;
+      font-size:12px; color:var(--text-dim);
       display:flex; align-items:center; gap:10px;
     }
     .divider::before,.divider::after { content:''; flex:1; height:1px; background:var(--border); }
   </style>
 </head>
 <body>
+
+  <button class="theme-btn" onclick="toggleTheme()" title="Toggle dark mode">
+    <svg id="theme-icon" viewBox="0 0 24 24">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+  </button>
+
   <div class="card">
     <div class="card-top">
       <div class="logo-icon">
@@ -188,7 +226,7 @@
         <label for="pwd">Password</label>
         <div class="input-wrap">
           <input type="password" id="pwd" name="password" placeholder="Enter your password" autocomplete="current-password" autofocus />
-          <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <svg class="ico" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
         </div>
         {% if error %}<div class="error-box">⚠ {{ error }}</div>{% endif %}
         <button class="btn" type="submit">
@@ -199,5 +237,28 @@
       <div class="divider">Authorised users only</div>
     </div>
   </div>
+
+  <script>
+    // Load saved theme
+    const saved = localStorage.getItem('anchorx-theme') || 'light';
+    applyTheme(saved);
+
+    function applyTheme(t) {
+      document.documentElement.setAttribute('data-theme', t);
+      const icon = document.getElementById('theme-icon');
+      if (t === 'dark') {
+        icon.innerHTML = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+      } else {
+        icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+      }
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('anchorx-theme', next);
+      applyTheme(next);
+    }
+  </script>
 </body>
 </html>
