@@ -2,7 +2,8 @@ from flask import Flask, render_template, request, session, redirect, url_for, j
 from humanizer import humanize, detect_ai
 import os
 
-app = Flask(__name__, template_folder='.')
+import os as _os
+app = Flask(__name__, template_folder=_os.path.dirname(_os.path.abspath(__file__)))
 
 # ── SECRET KEY ────────────────────────────────────────────────
 # Change this to any random string — keeps sessions secure
@@ -14,8 +15,8 @@ app.secret_key = "change-this-to-something-random-abc123xyz"
 PASSWORD = "ILOVEMINECRAFT"
 
 # ── AUTO-FIX SETTINGS ─────────────────────────────────────────
-MAX_AUTO_RETRIES = 8   # Max times to re-humanize in auto-fix mode
-TARGET_SCORE     = 15  # Stop when AI score drops below this %
+MAX_AUTO_RETRIES = 15   # Max times to re-humanize in auto-fix mode
+TARGET_SCORE     = 8  # Stop when AI score drops below this %
 
 
 # ──────────────────────────────────────────────────────────────
