@@ -728,3 +728,282 @@ def detect_ai(text):
         indicators.append("VERY LOW: Text appears mostly human")
 
     return {"score": round(score), "indicators": indicators}
+
+# ══════════════════════════════════════════════════════════════
+#  FIXED IMPROVEMENTS — controlled rates, no stacking
+# ══════════════════════════════════════════════════════════════
+
+# ── NEW AI WORD PATTERNS (2024-2025) ──────────────────────────
+EXTRA_PATTERNS = [
+    (r'\bdelve[sd]?\b',                 "get"),
+    (r'\bdelving\b',                    "getting into"),
+    (r'\bdelve into\b',                 "look into"),
+    (r'\btapestry\b',                   "mix"),
+    (r'\bnuanced?\b',                   "complex"),
+    (r'\bholistic(?:ally)?\b',          "overall"),
+    (r'\brobust\b',                     "strong"),
+    (r'\bsynergy\b',                    "working together"),
+    (r'\bparadigm\b',                   "model"),
+    (r'\bmultifaceted\b',               "complex"),
+    (r'\bgroundbreaking\b',             "new"),
+    (r'\bunprecedented\b',              "never seen before"),
+    (r'\brevolutionary\b',              "major"),
+    (r'\btransformative\b',             "big"),
+    (r'\binnovative\b',                 "new"),
+    (r'\bcutting.edge\b',               "new"),
+    (r'\bstate.of.the.art\b',           "modern"),
+    (r'\bgame.changing\b',              "important"),
+    (r'\bproactive(?:ly)?\b',           "active"),
+    (r'\bactionable\b',                 "useful"),
+    (r'\bimpactful\b',                  "effective"),
+    (r'\bempowers?\b',                  "helps"),
+    (r'\bensures?\b',                   "makes sure"),
+    (r'\bendeavou?rs?\b',               "tries"),
+    (r'\boptimal(?:ly)?\b',             "best"),
+    (r'\bstreamlines?\b',               "simplifies"),
+    (r'\bfosters?\b',                   "builds"),
+    (r'\bcultivates?\b',                "builds"),
+    (r'\bnavigates?\b',                 "handles"),
+    (r'\bmitigates?\b',                 "reduces"),
+    (r'\belucidate[sd]?\b',             "explain"),
+    (r'\bpertaining to\b',              "about"),
+    (r'\bin conjunction with\b',        "along with"),
+    (r'\bin accordance with\b',         "following"),
+    (r'\bmoving forward\b',             "from now on"),
+    (r'\bgoing forward\b',              "from now on"),
+    (r'\bin essence\b',                 "basically"),
+    (r'\bat its core\b',                "at heart"),
+    (r'\bshed[s]? light on\b',          "explain"),
+    (r'\bunderscore[sd]?\b',            "show"),
+    (r'\bembark[s]? on\b',              "start"),
+    (r'\bprioritize[sd]?\b',            "focus on"),
+    (r'\bstakeholders?\b',              "people involved"),
+    (r'\bwhereby\b',                    "where"),
+    (r'\bwhilst\b',                     "while"),
+    (r'\bamidst\b',                     "among"),
+    (r'\baforementioned\b',             "mentioned"),
+    (r'\bassist(?:s|ed)?\b',            "help"),
+    (r'\bin summary[,.]?\s*',           "so basically, "),
+    (r'\bto summarize[,.]?\s*',         "in short, "),
+    (r'\bto conclude[,.]?\s*',          "to wrap up, "),
+    (r'\bquite\b',                      "pretty"),
+    (r'\brather\b',                     "pretty"),
+    (r'\bextremely\b',                  "super"),
+    (r'\bincredibly\b',                 "really"),
+    (r'\bremarkably\b',                 "really"),
+    (r'\bfascinating\b',                "pretty cool"),
+    (r'\bintriguing\b',                 "interesting"),
+    (r'\bstunning\b',                   "crazy"),
+    (r'\bpurchase[sd]?\b',              "buy"),
+    (r'\bobtain[sd]?\b',                "get"),
+    (r'\bexamine[sd]?\b',               "look at"),
+    (r'\bwitness(?:ed)?\b',             "see"),
+    (r'\bencounter(?:ed)?\b',           "run into"),
+    (r'\battempt(?:ed|ing)?\b',         "try"),
+    (r'\bproceed(?:ed|ing)?\b',         "go"),
+    (r'\bconvey(?:ed|ing)?\b',          "say"),
+    (r'\bsimply\b',                     "just"),
+    (r'\bmerely\b',                     "just"),
+    (r'\bapproximately\b',              "around"),
+    (r'\btypically\b',                  "usually"),
+    (r'\bnormally\b',                   "usually"),
+    (r'\bpotentially\b',                "maybe"),
+    (r'\bpossibly\b',                   "maybe"),
+    (r'\bperhaps\b',                    "maybe"),
+    (r'\blikely\b',                     "probably"),
+    (r'\bregarding\b',                  "about"),
+    (r'\bconcerning\b',                 "about"),
+    (r'\bpreviously\b',                 "before"),
+    (r'\binitially\b',                  "at first"),
+    (r'\beventually\b',                 "at some point"),
+    (r'\bimmediately\b',                "right away"),
+    (r'\brapidly\b',                    "fast"),
+    (r'\bfrequently\b',                 "a lot"),
+    (r'\bcurrently\b',                  "right now"),
+    (r'\bsubstantially\b',              "a lot"),
+    (r'\bsignificantly\b',              "a lot"),
+]
+
+# YOUR voice — casual openers (max 1 per paragraph)
+YOUR_OPENERS = [
+    "Not gonna lie, ",
+    "Honestly, ",
+    "I feel like ",
+    "So basically ",
+    "Lowkey ",
+    "Ngl, ",
+    "The thing is, ",
+    "I mean, ",
+    "Real talk, ",
+    "And I think ",
+]
+
+# YOUR short punchy endings (max 1 per output)
+YOUR_ENDINGS = [
+    "which is pretty cool to me.",
+    "not gonna lie that's actually interesting.",
+    "lowkey didn't expect that.",
+    "which is kind of wild.",
+    "and yeah that basically sums it up.",
+    "which honestly makes a lot of sense.",
+    "pretty straightforward when you think about it.",
+    "which is kind of a big deal if you ask me.",
+]
+
+
+def apply_extra_patterns(text):
+    """Safe word-for-word replacements only — no structure changes."""
+    for pattern, replacement in EXTRA_PATTERNS:
+        try:
+            text = re.sub(pattern, replacement, text, flags=re.IGNORECASE)
+        except Exception:
+            pass
+    return text
+
+
+def inject_voice_once(text):
+    """
+    Add YOUR voice touches — strictly controlled:
+    - Max 1 opener per paragraph
+    - Max 1 ending in the whole text
+    - Never fires on a sentence that already has a filler/starter
+    """
+    paragraphs = text.split('\n\n')
+    result = []
+    ending_used = False
+
+    for para in paragraphs:
+        sentences = re.split(r'(?<=[.!?])\s+', para.strip())
+        if not sentences:
+            result.append(para)
+            continue
+
+        opener_used = False
+        new_s = []
+
+        for i, s in enumerate(sentences):
+            words = s.split()
+
+            # Skip if sentence already has a filler/starter word
+            already_modified = any(
+                s.lower().startswith(w.lower())
+                for w in ['honestly', 'i mean', 'not gonna', 'ngl', 'look,',
+                          'real talk', 'the thing', 'so basically', 'lowkey',
+                          'i feel', 'i think', 'i\'d say', 'from what',
+                          'personally', 'truth is', 'between you']
+            )
+
+            # Add opener — only once per paragraph, only on sentences > 6 words
+            if (not opener_used
+                    and not already_modified
+                    and i > 0
+                    and len(words) > 6
+                    and random.random() < 0.35):
+                opener = random.choice(YOUR_OPENERS)
+                s = opener + s[0].lower() + s[1:]
+                opener_used = True
+
+            # Add ending — only once in entire text, only on last sentence of a para
+            if (not ending_used
+                    and i == len(sentences) - 1
+                    and len(words) > 8
+                    and random.random() < 0.40):
+                s = s.rstrip('.!?') + ', ' + random.choice(YOUR_ENDINGS)
+                ending_used = True
+
+            new_s.append(s)
+
+        result.append(' '.join(new_s))
+
+    return '\n\n'.join(result)
+
+
+def safe_sentence_rebuild(text):
+    """
+    Controlled sentence rebuilder — much lower rates than the original.
+    Only does two things:
+    1. Splits sentences > 25 words (no filler injection)
+    2. Adds 1 short punchy sentence per paragraph max
+    """
+    paragraphs = text.split('\n\n')
+    output = []
+
+    for para in paragraphs:
+        sentences = re.split(r'(?<=[.!?])\s+', para.strip())
+        sentences = [s.strip() for s in sentences if s.strip()]
+        new_s = []
+        short_added = False
+
+        for s in sentences:
+            words = s.split()
+
+            # Split long sentences cleanly
+            if len(words) > 25:
+                split_words = ['and', 'but', 'so', 'because', 'which',
+                               'while', 'although', 'since', 'though']
+                center = len(words) // 2
+                split_done = False
+                for offset in range(0, center - 3):
+                    for d in [1, -1]:
+                        idx = center + offset * d
+                        if 6 <= idx <= len(words) - 6:
+                            if words[idx].lower() in split_words:
+                                first  = ' '.join(words[:idx]).rstrip(',') + '.'
+                                second = ' '.join(words[idx:])
+                                second = second[0].upper() + second[1:]
+                                new_s.extend([first, second])
+                                split_done = True
+                                break
+                    if split_done:
+                        break
+                if not split_done:
+                    new_s.append(s)
+                continue
+
+            new_s.append(s)
+
+        # Add ONE short punchy at the end of the paragraph (30% chance)
+        if not short_added and len(new_s) > 2 and random.random() < 0.30:
+            punchy = [
+                "Pretty interesting when you think about it.",
+                "Makes sense, right?",
+                "And honestly that's kind of the whole point.",
+                "Not that complicated once you get it.",
+                "Which is worth knowing.",
+                "Kind of a big deal actually.",
+            ]
+            new_s.append(random.choice(punchy))
+
+        output.append(' '.join(new_s))
+
+    return '\n\n'.join(output)
+
+
+def humanize(text):
+    """
+    Clean humanize — runs pipeline ONCE, strict rate limits,
+    no stacking, your voice baked in.
+    """
+    if not text or len(text.strip()) < 5:
+        return "Please paste some text."
+
+    # Pass 1 — word-level substitutions only (safe, no structure changes)
+    text = strip_ai_openers(text)
+    text = clean_symbols(text)
+    text = apply_patterns(text)
+    text = apply_extra_patterns(text)      # new AI words
+    text = swap_words(text)
+    text = apply_contractions(text)
+    text = apply_synonym_pools(text)
+
+    # Pass 2 — structure (once only)
+    text = safe_sentence_rebuild(text)     # controlled splitter
+
+    # Pass 3 — voice injection (once, with strict limits)
+    text = inject_voice_once(text)         # your voice, max 1 per para
+
+    # Pass 4 — cleanup
+    text = break_paragraph_uniformity(text)
+    text = fix_spaces(text)
+
+    return text
